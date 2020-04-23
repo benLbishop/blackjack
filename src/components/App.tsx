@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { connect } from 'react-redux';
 
 import RootState from '../reducers';
-import { initializeDeck, handleHit } from '../actions/cardActions';
+import { initializeDeck, handleHit, handleStand } from '../actions/cardActions';
 import Game from './Game';
 import { Dealer, Player } from '../types/playerTypes';
 import ResultsScreen from './ResultsScreen';
@@ -16,6 +16,7 @@ interface Props {
   playerWon: boolean;
   initializeDeck(deckCount?: number): void;
   handleHit(playerId: string): void;
+  handleStand(playerId: string): void;
 }
 
 class App extends React.PureComponent<Props> {
@@ -34,7 +35,7 @@ class App extends React.PureComponent<Props> {
         dealer={this.props.dealer}
         players={this.props.players}
         handleHit={this.props.handleHit}
-        handleStay={(id: string) => {console.log(`stay ${id}`)}} // TODO
+        handleStay={this.props.handleStand} // TODO
       />
     )
   }
@@ -57,7 +58,8 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, undefined, Action>) => ({
   initializeDeck: (deckCount?: number) => dispatch(initializeDeck(deckCount)),
-  handleHit: (playerId: string) => dispatch(handleHit(playerId))
+  handleHit: (playerId: string) => dispatch(handleHit(playerId)),
+  handleStand: (playerId: string) => dispatch(handleStand(playerId)),
 })
 
 export default connect(

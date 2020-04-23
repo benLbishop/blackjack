@@ -3,7 +3,7 @@ import { getType } from 'typesafe-actions';
 import { DeckMetaData, Card } from '../types/cardTypes';
 import { Dealer, Player } from '../types/playerTypes';
 import constants from '../config/constants';
-import { calculateHandScore } from '../lib/blackjack';
+import { calculateHandScore, playerHasBusted } from '../lib/blackjack';
 
 export interface GameState {
     testString: string; // TODO: remove
@@ -44,8 +44,21 @@ const GameReducer = (
                 cards: updatedCards,
                 score: updatedScore
             }
+            const hasBusted = playerHasBusted(updatedScore);
+            let isComplete = false;
+            let playerWon = false;
+            if (hasBusted) {
+                isComplete = true;
+            }
+            if (updatedScore === 21) {
+                isComplete = true;
+                playerWon = true;
+            }
+
             return {
                 ...state,
+                isComplete,
+                playerWon,
                 players: updatedPlayers
             };
         }
@@ -79,10 +92,33 @@ const GameReducer = (
                 cardsIdx += 2;
             }
             // TODO: see if dealer won on deal
+            let isComplete = false;
+            if (refreshedDealer.score === 21) {
+                isComplete = true;
+            }
             return {
                 ...state,
+                isComplete,
+                playerWon: false,
                 dealer: refreshedDealer,
                 players: refreshedPlayers
+            }
+        }
+        case getType(cardActions.playerFinished): {
+            const playerId = action.payload.playerId;
+            const player = state.players.find(p => p.id === playerId);
+            if (!player) {
+                // TODO
+                return state;
+            }
+            let playerWon = false;
+            if (player.score > state.dealer.score) {
+                playerWon = true;
+            }
+            return {
+                ...state,
+                playerWon,
+                isComplete: true
             }
         }
         default: {

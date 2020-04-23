@@ -1,4 +1,5 @@
 import { Card, CardValue } from '../types/cardTypes';
+import { Dealer, Player } from '../types/playerTypes';
 
 export const calculateHandScore = (hand: Card[]) => {
     interface ScoreAccumulator {
@@ -7,13 +8,11 @@ export const calculateHandScore = (hand: Card[]) => {
     }
     const { score: totalScore, numHighAces } = hand.reduce((accum: ScoreAccumulator, nextCard: Card): ScoreAccumulator => {
         let { score, numHighAces } = accum;
-        if (nextCard.value === CardValue.ACE) {
+        if (nextCard.value === 11) {
             numHighAces += 1;
         }
         // TODO: idk why this enum value is being a string instead of an int
-        console.log('before score', score)
-        score += getCardValueInt(nextCard.value);
-        console.log('after score', score)
+        score += nextCard.value;
         if (score > 21 && numHighAces > 0) {
             // treat one of the aces we've seen as a low ace
             score -= 10;
@@ -27,41 +26,38 @@ export const calculateHandScore = (hand: Card[]) => {
     return totalScore;
 }
 
-const calculateGameResult = () => {
+export const playerHasBusted = (score: number) => {
+    return score > 21;
+};
 
-}
-
-const getCardValueInt = (valStr: CardValue): number => {
-    //@ts-ignore
-    const val = parseInt(valStr, 10);
-    console.log('cardVal: ', val, valStr);
-    if (val === 0) {
+// TODO: convert to enum
+export const parseCardValue = (valStr: string): number => {
+    if (valStr === '2') {
         return 2;
     }
-    if (val === 1) {
+    if (valStr === '3') {
         return 3;
     }
-    if (val === 2) {
+    if (valStr === '4') {
         return 4;
     }
-    if (val === 3) {
+    if (valStr === '5') {
         return 5;
     }
-    if (val === 4) {
+    if (valStr === '6') {
         return 6;
     }
-    if (val === 5) {
+    if (valStr === '7') {
         return 7;
     }
-    if (val === 6) {
+    if (valStr === '8') {
         return 8;
     }
-    if (val === 7) {
+    if (valStr === '9') {
         return 9;
     }
-    if (val === 11) {
+    if (valStr === 'ACE') {
         return 11;
     }
-    console.log('did not find')
     return 10;
 }

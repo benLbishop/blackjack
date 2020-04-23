@@ -1,6 +1,6 @@
 export interface Card {
     image: string;
-    value: CardValue;
+    value: number;
     suit: Suit;
     code: string; // TODO: make enum?
 }

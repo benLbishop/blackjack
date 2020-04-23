@@ -17,6 +17,10 @@ export const cardActions = {
     gameInitialized: createAction(
         'GAME_INITIALIZED',
         (newCards: Card[]) => ({ newCards })
+    )(),
+    playerFinished: createAction(
+        'PLAYER_FINISHED',
+        (playerId: string) => ({ playerId })
     )()
 }
 
@@ -60,5 +64,11 @@ export const handleHit = (playerId: string) => {
         }
         const newCard = await drawOneCard(deckId);
         dispatch(cardActions.cardAdded(playerId, newCard));
+    };
+};
+
+export const handleStand = (playerId: string) => {
+    return (dispatch: ThunkDispatch<RootState, void, Action>) => {
+        dispatch(cardActions.playerFinished(playerId));
     };
 };

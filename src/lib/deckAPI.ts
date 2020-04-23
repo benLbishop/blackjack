@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import { Card, DeckMetaData } from '../types/cardTypes';
+import { parseCardValue } from './blackjack';
 import constants from '../config/constants';
 
 const handleAPIError = (err: any) => {
@@ -72,5 +73,6 @@ const getCards = async (deckId: string, numCards: number): Promise<Card[]> => {
         handleAPIError(data);
         throw Error(`card retrieval not successful. Data: ${data.toString()}`);
     }
-    return data.cards;
+    //@ts-ignore
+    return data.cards.map(c => ({...c, value: parseCardValue(c.value)}));
 }
