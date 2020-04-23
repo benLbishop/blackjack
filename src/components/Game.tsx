@@ -4,9 +4,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import RootState from '../reducers';
 import { initializeDeck } from '../actions/cardActions';
+import { Dealer, Player } from '../types/playerTypes';
+import DealerView from './Dealer';
+import PlayerView from './Player';
 
 interface Props {
-  testString: string;
+  dealer: Dealer;
+  players: Player[];
   initializeDeck(deckCount?: number): void;
 }
 
@@ -17,17 +21,32 @@ class Game extends React.PureComponent<Props> {
     this.props.initializeDeck()
   }
 
+  getPlayerDisplays = (): JSX.Element[] => {
+    const display: JSX.Element[] = this.props.players.map(p => {
+      return <PlayerView
+        key={p.id}
+        displayName={p.displayName}
+        cards={p.cards}
+        handleHit={() => {console.log(`hit ${p.id}`)}}
+        handleStand={() => {console.log(`stand ${p.id}`)}}
+      />
+    });
+    return display;
+  }
+
   render() {
     return (
-      <div className='flex-1 bg-green-700'>
-        <p>{this.props.testString}</p>
+      <div className='flex-1 flex-row bg-green-700'>
+        <DealerView {...this.props.dealer}/>
+        {this.getPlayerDisplays()}
       </div>
     );
   }
 }
 
 const mapStateToProps = (state: RootState) => ({
-  testString: state.game.testString
+  dealer: state.game.dealer,
+  players: state.game.players
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, undefined, Action>) => ({
