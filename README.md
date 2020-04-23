@@ -1,10 +1,18 @@
 # Blackjack
 
+## Running
+
+- clone the repository
+- in the directory, run `yarn`
+- run `yarn start`
+
+The blackjack game should appear in your browser at localhost:3000.
+
 ## Implementation
 
-Gameplan:
+### Gameplan:
 
-### Visuals
+#### Visuals
 
 The top level component should be a "Game" or something of that sort, which will hold a dealer, a list of players, a deck, and maybe some others.
 
@@ -20,7 +28,7 @@ I'll need a component for the end of the game, which will render a won or lost m
 
 I think that's the basics, I'll add more later.
 
-### Logic
+#### Logic
 For  the logic:
 
 I'll need to initially create a deck with a count of 6, probably when the Game component mounts. Initially we have two cards for the dealer and two for each player; I could do this in separate queries for clarity, but it's more efficient to just query for the number of cards I need at once and divy them up after receiving them. I'll have a function that takes in numPlayers and will fetch 2 * (numPlayers + 1) (+1 for dealer) and distribute them appropriately afterwords.
@@ -30,3 +38,10 @@ If a player calls 'hit', I'll need to make a request for a new card. I should ma
 At the start of the game, I still need to check for a loss condition - the dealer could be dealt 21, which means the game is over. Additionally, after each hit, I need to check if the game is over, and if the player says stand, I need to check if the game is over.
 
 That's the basics, so I'll try to get that set up now.
+
+#### Additional Technologies Used
+
+- Typescript
+- Redux and related libraries
+- Axios for fetch requests
+- Tailwind CSS
