@@ -2,6 +2,7 @@ import React from 'react';
 
 interface Props {
   playerWon: boolean;
+  reset(): void;
 }
 
 const ResultsScreen: React.FC<Props> = (props) => {
@@ -12,6 +13,7 @@ const ResultsScreen: React.FC<Props> = (props) => {
         ? 'Congrats, you won!'
         : 'Dealer wins this time.'
       }
+      <button className='mx-3 bg-white' onClick={props.reset}>Play Again?</button>
     </div>
   )
 }

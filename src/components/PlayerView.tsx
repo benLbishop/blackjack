@@ -30,8 +30,8 @@ const PlayerView: React.FC<Props> = (props) => {
           {getCardDisplay()}
         </div>
         <div className='flex flex-row'>
-          <button onClick={props.handleHit}>Hit</button>
-          <button onClick={props.handleStand}>Stand</button>
+          <button className='mx-3 bg-white' onClick={props.handleHit}>Hit</button>
+          <button className='mx-3 bg-white' onClick={props.handleStand}>Stand</button>
         </div>
       </div>
     </div>
