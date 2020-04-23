@@ -1,44 +1,32 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Blackjack
 
-## Available Scripts
+## Implementation
 
-In the project directory, you can run:
+Gameplan:
 
-### `yarn start`
+### Visuals
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The top level component should be a "Game" or something of that sort, which will hold a dealer, a list of players, a deck, and maybe some others.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+I'll need a Dealer component and a Player component (these could probably be one component with different props, but it'll be easier to keep them separate for the time frame).
 
-### `yarn test`
+The Dealer component will only need a list of two cards, as well as some kind of name identifying it as the Dealer.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The Player should be set up to easily expand the game to more than 1 player, if desired. It should have an id, a name, a list of cards (can be up to 11 I guess. If you're playing blackjack with 3+ decks, you could get 11 aces, one valued at 11 and 10 at 1). They also will need buttons for hitting and staying.
 
-### `yarn build`
+The Card class should be a div that renders an image. A value might be helpful for a tooltip or something of the sort.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+I'll need a component for the end of the game, which will render a won or lost message as appropriate, and have a 'start new game' button.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+I think that's the basics, I'll add more later.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Logic
+For  the logic:
 
-### `yarn eject`
+I'll need to initially create a deck with a count of 6, probably when the Game component mounts. Initially we have two cards for the dealer and two for each player; I could do this in separate queries for clarity, but it's more efficient to just query for the number of cards I need at once and divy them up after receiving them. I'll have a function that takes in numPlayers and will fetch 2 * (numPlayers + 1) (+1 for dealer) and distribute them appropriately afterwords.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+If a player calls 'hit', I'll need to make a request for a new card. I should make the hit button disabled while the request is processing so they can't hit multiple times.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+At the start of the game, I still need to check for a loss condition - the dealer could be dealt 21, which means the game is over. Additionally, after each hit, I need to check if the game is over, and if the player says stand, I need to check if the game is over.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+That's the basics, so I'll try to get that set up now.
