@@ -1,59 +1,27 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { Action } from 'redux';
-import RootState from '../reducers';
-import { initializeDeck } from '../actions/cardActions';
+
 import { Dealer, Player } from '../types/playerTypes';
-import DealerView from './Dealer';
-import PlayerView from './Player';
+import DealerView from './DealerView';
+import PlayersContainer from './PlayersContainer';
 
 interface Props {
   dealer: Dealer;
   players: Player[];
-  initializeDeck(deckCount?: number): void;
+  handleHit(playerId: string): void;
+  handleStay(playerId: string): void;
 }
 
-class Game extends React.PureComponent<Props> {
-
-  componentDidMount() {
-    // TODO: move to app
-    this.props.initializeDeck()
-  }
-
-  getPlayerDisplays = (): JSX.Element[] => {
-    const display: JSX.Element[] = this.props.players.map(p => {
-      return <PlayerView
-        key={p.id}
-        displayName={p.displayName}
-        cards={p.cards}
-        handleHit={() => {console.log(`hit ${p.id}`)}}
-        handleStand={() => {console.log(`stand ${p.id}`)}}
+const Game: React.FC<Props> = (props) => {
+  return (
+    <div className='flex flex-1 flex-col justify-between align-center bg-green-700'>
+      <DealerView {...props.dealer}/>
+      <PlayersContainer
+        players={props.players}
+        handleHit={props.handleHit}
+        handleStay={props.handleStay}
       />
-    });
-    return display;
-  }
-
-  render() {
-    return (
-      <div className='flex-1 flex-row bg-green-700'>
-        <DealerView {...this.props.dealer}/>
-        {this.getPlayerDisplays()}
-      </div>
-    );
-  }
+    </div>
+  );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  dealer: state.game.dealer,
-  players: state.game.players
-});
-
-const mapDispatchToProps = (dispatch: ThunkDispatch<RootState, undefined, Action>) => ({
-  initializeDeck: (deckCount?: number) => dispatch(initializeDeck(deckCount))
-})
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Game);
+export default Game;
