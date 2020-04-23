@@ -2,7 +2,7 @@ export interface Card {
     image: string;
     value: CardValue;
     suit: Suit;
-    code?: string; // TODO
+    code: string; // TODO: make enum?
 }
 
 export enum CardValue {
