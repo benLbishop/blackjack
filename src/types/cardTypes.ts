@@ -28,3 +28,9 @@ export enum Suit {
     CLUBS = 'CLUBS',
     DIAMONDS = 'DIAMONDS'
 }
+
+export interface DeckMetaData {
+    deck_id: string;
+    remaining: number;
+    shuffled: boolean;
+}

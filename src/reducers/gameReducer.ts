@@ -1,12 +1,14 @@
 import { cardActions, CardAction } from '../actions/cardActions';
 import { getType } from 'typesafe-actions';
+import { DeckMetaData } from '../types/cardTypes';
 
 export interface GameState {
-    deckId: string;
+    testString: string; // TODO: remove
+    deck?: DeckMetaData;
 }
 
 const initialState: GameState = {
-    deckId: 'reducerTest'
+    testString: 'reducerTest'
 };
 
 const GameReducer = (
@@ -18,6 +20,12 @@ const GameReducer = (
             // TODO
             console.log('cardAdded not implemented');
             return state;
+        }
+        case getType(cardActions.deckInitialized): {
+            return {
+                ...state,
+                deck: action.payload.deckData
+            }
         }
         default: {
             return state;
