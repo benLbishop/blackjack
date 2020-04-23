@@ -1,14 +1,16 @@
 import { Player, Dealer } from '../types/playerTypes';
 
 const DEFAULT_PLAYER: Player = {
-    id: '',
+    id: 'player',
     displayName: 'default',
-    cards: []
+    cards: [],
+    score: 0
 };
 
 const DEFAULT_DEALER: Dealer = {
     displayName: 'Dealer',
-    cards: []
+    cards: [],
+    score: 0
 }
 
 const constants = {

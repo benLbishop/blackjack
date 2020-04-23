@@ -6,7 +6,6 @@ export interface Card {
 }
 
 export enum CardValue {
-    ACE_LOW = 1,
     TWO,
     THREE,
     FOUR,
@@ -19,7 +18,7 @@ export enum CardValue {
     JACK,
     QUEEN,
     KING,
-    ACE_HIGH
+    ACE
 }
 
 export enum Suit {
