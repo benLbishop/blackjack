@@ -3,20 +3,22 @@ import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { Card, DeckMetaData } from '../types/cardTypes';
 import RootState from '../reducers';
-import { getNewDeck, drawOneCard, initializeBlackjackGame } from '../lib/deckAPI';
+import { getNewDeck, drawOneCard, drawBlackjackStartingCards } from '../lib/deckAPI';
+import { Player, Dealer } from '../types/playerTypes';
+import { dealStartingCards } from '../lib/blackjack';
 
-export const cardActions = {
-    cardAdded: createAction(
-        'CARD_ADDED',
-        (playerId: string, newCard: Card) => ({ playerId, newCard })
-    )(),
+export const gameActions = {
     deckInitialized: createAction(
         'DECK_INITIALIZED',
         (deckData: DeckMetaData) => ({ deckData })
     )(),
     gameInitialized: createAction(
         'GAME_INITIALIZED',
-        (newCards: Card[]) => ({ newCards })
+        (dealer: Dealer, players: Player[]) => ({ dealer, players })
+    )(),
+    addCardToHand: createAction(
+        'ADD_CARD_TO_HAND',
+        (playerId: string, newCard: Card) => ({ playerId, newCard })
     )(),
     playerFinished: createAction(
         'PLAYER_FINISHED',
@@ -24,7 +26,7 @@ export const cardActions = {
     )()
 }
 
-export type CardAction = ActionType<typeof cardActions>;
+export type GameAction = ActionType<typeof gameActions>;
 
 export const initializeDeck = (deckCount?: number) => {
     return async (dispatch: ThunkDispatch<RootState, void, Action>) => {
@@ -34,14 +36,14 @@ export const initializeDeck = (deckCount?: number) => {
             console.log('getNewDeck returned undefined');
             return;
         }
-        dispatch(cardActions.deckInitialized(deckData));
+        dispatch(gameActions.deckInitialized(deckData));
         dispatch(initializeNewGame())
     };
 };
 
 export const initializeNewGame = () => {
     return async (dispatch: ThunkDispatch<RootState, void, Action>, getState: () => RootState) => {
-        const { deck, players } = getState().game;
+        const { deck, players, dealer } = getState().game;
         const deckId = deck?.deck_id;
         const numPlayers = players.length; 
         if (!deckId) {
@@ -49,8 +51,9 @@ export const initializeNewGame = () => {
             console.log('no deckId when initializing game');
             return;
         }
-        const cards = await initializeBlackjackGame(deckId, numPlayers);
-        dispatch(cardActions.gameInitialized(cards));
+        const cards = await drawBlackjackStartingCards(deckId, numPlayers);
+        const { dealer: updatedDealer, players: updatedPlayers } = dealStartingCards(cards, dealer, players);
+        dispatch(gameActions.gameInitialized(updatedDealer, updatedPlayers));
     };
 };
 
@@ -63,12 +66,12 @@ export const handleHit = (playerId: string) => {
             return;
         }
         const newCard = await drawOneCard(deckId);
-        dispatch(cardActions.cardAdded(playerId, newCard));
+        dispatch(gameActions.addCardToHand(playerId, newCard));
     };
 };
 
 export const handleStand = (playerId: string) => {
     return (dispatch: ThunkDispatch<RootState, void, Action>) => {
-        dispatch(cardActions.playerFinished(playerId));
+        dispatch(gameActions.playerFinished(playerId));
     };
 };

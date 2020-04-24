@@ -7,8 +7,10 @@ export interface Player {
     score: number;
 }
 
+// TODO: get rid, or maybe have this extend player
+// if I think Dealer could have additional fields
 export interface Dealer {
     displayName: string;
-    cards: [] | [Card, Card];
+    cards: Card[];
     score: number;
 }

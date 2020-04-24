@@ -21,7 +21,8 @@ const constants = {
     },
     game: {
         DEFAULT_PLAYER,
-        DEFAULT_DEALER
+        DEFAULT_DEALER,
+        NUM_STARTING_CARDS: 2
     }
 };
 

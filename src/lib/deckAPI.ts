@@ -44,7 +44,7 @@ interface GetCardsRes {
     cards: Card[]
 }
 
-export const initializeBlackjackGame = async (deckId: string, numPlayers: number) => {
+export const drawBlackjackStartingCards = async (deckId: string, numPlayers: number) => {
     // generate 2 cards per player and 2 for dealer
     const numCards = 2 * (numPlayers + 1);
     return await getCards(deckId, numCards);

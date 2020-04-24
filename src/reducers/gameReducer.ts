@@ -1,9 +1,9 @@
-import { cardActions, CardAction } from '../actions/cardActions';
+import { gameActions, GameAction } from '../actions/cardActions';
 import { getType } from 'typesafe-actions';
 import { DeckMetaData, Card } from '../types/cardTypes';
 import { Dealer, Player } from '../types/playerTypes';
 import constants from '../config/constants';
-import { calculateHandScore, playerHasBusted } from '../lib/blackjack';
+import { updateHand, checkForPlayerCompletion } from '../lib/blackjack';
 
 export interface GameState {
     deck?: DeckMetaData;
@@ -22,11 +22,39 @@ const initialState: GameState = {
 
 const GameReducer = (
     state: GameState = initialState,
-    action: CardAction
+    action: GameAction
 ): GameState => {
     switch (action.type) {
-        case getType(cardActions.cardAdded): {
+        case getType(gameActions.deckInitialized): {
+            return {
+                ...state,
+                deck: action.payload.deckData
+            }
+        }
+        case getType(gameActions.gameInitialized): {
+            const { dealer, players } = action.payload;
+            let isComplete = false;
+            let playerWon = false;
+            // check to see if dealer won
+            if (dealer.score === 21) {
+                isComplete = true;
+            } else if (players[0].score === 21) {
+                // TODO: don't make this depend on one player
+                isComplete = true;
+                playerWon = true;
+            }
+            return {
+                ...state,
+                dealer,
+                players,
+                isComplete,
+                playerWon
+            };
+        }
+        case getType(gameActions.addCardToHand): {
             const { playerId, newCard } = action.payload;
+
+            // get the index in the player array based on payload
             const updatedPlayers = state.players.slice();
             const playerIdx = updatedPlayers.findIndex(p => {
                 return p.id === playerId;
@@ -35,23 +63,11 @@ const GameReducer = (
                 // TODO: error of some sort
                 return state;
             }
-            const updatedCards = [...updatedPlayers[playerIdx].cards, newCard];
-            const updatedScore = calculateHandScore(updatedCards);
-            updatedPlayers[playerIdx] = {
-                ...updatedPlayers[playerIdx],
-                cards: updatedCards,
-                score: updatedScore
-            }
-            const hasBusted = playerHasBusted(updatedScore);
-            let isComplete = false;
-            let playerWon = false;
-            if (hasBusted) {
-                isComplete = true;
-            }
-            if (updatedScore === 21) {
-                isComplete = true;
-                playerWon = true;
-            }
+
+            const updatedPlayer = updateHand(updatedPlayers[playerIdx], newCard);
+            // check to see if player has busted or has 21
+            const { isComplete, playerWon } = checkForPlayerCompletion(updatedPlayer);
+            updatedPlayers[playerIdx] = updatedPlayer;
 
             return {
                 ...state,
@@ -60,55 +76,15 @@ const GameReducer = (
                 players: updatedPlayers
             };
         }
-        case getType(cardActions.deckInitialized): {
-            return {
-                ...state,
-                deck: action.payload.deckData
-            }
-        }
-        case getType(cardActions.gameInitialized): {
-            const { newCards } = action.payload;
-            const refreshedPlayers = state.players;
-            let refreshedDealer = {...state.dealer};
-            // newCards should account for two cards per player and for the dealer
-            let cardsIdx = 0;
-            for (let i = 0; i < refreshedPlayers.length + 1; i++) {
-                // TODO: probably should do this in order like how a normal game would work
-                const startingCards = [newCards[cardsIdx], newCards[cardsIdx + 1]];
-                const startingScore = calculateHandScore(startingCards);
-                if (i === refreshedPlayers.length) {
-                    // allocate cards for the dealer last
-                    refreshedDealer.cards = startingCards as [Card, Card];
-                    refreshedDealer.score = startingScore;
-                } else {
-                    refreshedPlayers[i] = {
-                        ...refreshedPlayers[i],
-                        cards: startingCards,
-                        score: startingScore
-                    }
-                }
-                cardsIdx += 2;
-            }
-            // TODO: see if dealer won on deal
-            let isComplete = false;
-            if (refreshedDealer.score === 21) {
-                isComplete = true;
-            }
-            return {
-                ...state,
-                isComplete,
-                playerWon: false,
-                dealer: refreshedDealer,
-                players: refreshedPlayers
-            }
-        }
-        case getType(cardActions.playerFinished): {
+        case getType(gameActions.playerFinished): {
             const playerId = action.payload.playerId;
             const player = state.players.find(p => p.id === playerId);
             if (!player) {
-                // TODO
+                // TODO: error of some sort
                 return state;
             }
+
+            // we've checked for busting when adding cards, so just need to check if we beat dealer's score
             let playerWon = false;
             if (player.score > state.dealer.score) {
                 playerWon = true;
