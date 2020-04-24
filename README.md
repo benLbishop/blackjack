@@ -8,6 +8,14 @@
 
 The blackjack game should appear in your browser at localhost:3000.
 
+## TODOs
+
+- Shuffle cards when the card count gets below a threshold
+- Write tests for lib functions
+- Convert the ResultsScreen to a modal, display winning/losing hands
+- Display current scores
+- Make a key for cards, since I can get the exact same card in the same hand
+
 ## Implementation
 
 ### Gameplan:

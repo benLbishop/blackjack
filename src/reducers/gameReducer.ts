@@ -6,7 +6,6 @@ import constants from '../config/constants';
 import { calculateHandScore, playerHasBusted } from '../lib/blackjack';
 
 export interface GameState {
-    testString: string; // TODO: remove
     deck?: DeckMetaData;
     dealer: Dealer;
     players: Player[];
@@ -15,7 +14,6 @@ export interface GameState {
 }
 
 const initialState: GameState = {
-    testString: 'reducerTest',
     dealer: constants.game.DEFAULT_DEALER,
     players: [constants.game.DEFAULT_PLAYER],
     isComplete: false,

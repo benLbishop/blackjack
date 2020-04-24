@@ -22,7 +22,6 @@ interface Props {
 
 class App extends React.PureComponent<Props> {
   componentDidMount() {
-    // TODO: move to app
     this.props.initializeDeck()
   }
 
@@ -36,7 +35,7 @@ class App extends React.PureComponent<Props> {
         dealer={this.props.dealer}
         players={this.props.players}
         handleHit={this.props.handleHit}
-        handleStay={this.props.handleStand} // TODO
+        handleStay={this.props.handleStand}
       />
     )
   }
