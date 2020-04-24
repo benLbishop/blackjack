@@ -8,7 +8,7 @@ const handleAPIError = (err: any) => {
     console.log('API Error: ', err);
 };
 
-interface GetDeckRes extends DeckMetaData {
+interface DeckRes extends DeckMetaData {
     success: boolean,
 }
 
@@ -24,7 +24,7 @@ export const getNewDeck = async (numDecks?: number): Promise<DeckMetaData | unde
         handleAPIError(err);
         return undefined;
     }
-    const data = res.data as GetDeckRes;
+    const data = res.data as DeckRes;
     if (data.success !== true) {
         // TODO
         handleAPIError(data);
@@ -37,14 +37,29 @@ export const getNewDeck = async (numDecks?: number): Promise<DeckMetaData | unde
     }
 };
 
-interface GetCardsRes {
-    success: boolean,
-    deck_id: string,
-    remaining: number,
-    cards: Card[]
+const shuffleDeck = async (deckId: string) => {
+    const url = `https://deckofcardsapi.com/api/deck/${deckId}/shuffle/`;
+
+    let res: AxiosResponse;
+
+    try {
+        res = await axios.get(url);
+    } catch (err) {
+        handleAPIError(err);
+        throw err;
+    }
+    const data = res.data as DeckRes;
+    if (data.success !== true) {
+        // TODO
+        handleAPIError(data);
+        throw Error(`card retrieval not successful. Data: ${data.toString()}`);
+    }
 }
 
 export const drawBlackjackStartingCards = async (deckId: string, numPlayers: number) => {
+    // shuffle cards before game starts
+    // TODO: Maybe shuffle only when remaining card count is low?
+    await shuffleDeck(deckId);
     // generate 2 cards per player and 2 for dealer
     const numCards = 2 * (numPlayers + 1);
     return await getCards(deckId, numCards);
@@ -55,8 +70,14 @@ export const drawOneCard = async (deckId: string): Promise<Card> => {
     return res[0];
 }
 
+interface GetCardsRes {
+    success: boolean,
+    deck_id: string,
+    remaining: number,
+    cards: Card[]
+}
+
 const getCards = async (deckId: string, numCards: number): Promise<Card[]> => {
-    // TODO: account for when cardCount is low and shuffle. Maybe shuffle by default at start of new game?
     const url = `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=${numCards}`;
 
     let res: AxiosResponse;
