@@ -12,7 +12,7 @@ import ResultsScreen from './ResultsScreen';
 interface Props {
   dealer: Dealer;
   players: Player[];
-  isComplete: boolean;
+  gameComplete: boolean;
   playerWon: boolean;
   initializeDeck(deckCount?: number): void;
   handleHit(playerId: string): void;
@@ -25,25 +25,18 @@ class App extends React.PureComponent<Props> {
     this.props.initializeDeck()
   }
 
-  getDisplay = () => {
-    const { isComplete, playerWon } = this.props;
-    if (isComplete) {
-      return <ResultsScreen playerWon={playerWon} reset={this.props.reset} />;
-    }
-    return (
-      <Game
-        dealer={this.props.dealer}
-        players={this.props.players}
-        handleHit={this.props.handleHit}
-        handleStay={this.props.handleStand}
-      />
-    )
-  }
-
   render() {
+    const { gameComplete, playerWon } = this.props;
+
     return (
-      <div className="w-screen h-screen bg-blue-600 flex">
-        {this.getDisplay()}
+      <div className="w-screen h-screen flex">
+        <Game
+          dealer={this.props.dealer}
+          players={this.props.players}
+          handleHit={this.props.handleHit}
+          handleStay={this.props.handleStand}
+        />
+        {gameComplete && <ResultsScreen playerWon={playerWon} reset={this.props.reset} />}
       </div>
     );
   }
@@ -52,7 +45,7 @@ class App extends React.PureComponent<Props> {
 const mapStateToProps = (state: RootState) => ({
   dealer: state.game.dealer,
   players: state.game.players,
-  isComplete: state.game.isComplete,
+  gameComplete: state.game.gameComplete,
   playerWon: state.game.playerWon
 });
 

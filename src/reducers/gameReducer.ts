@@ -9,14 +9,14 @@ export interface GameState {
     deck?: DeckMetaData;
     dealer: Dealer;
     players: Player[];
-    isComplete: boolean;
+    gameComplete: boolean;
     playerWon: boolean;
 }
 
 const initialState: GameState = {
     dealer: constants.game.DEFAULT_DEALER,
     players: [constants.game.DEFAULT_PLAYER],
-    isComplete: false,
+    gameComplete: false,
     playerWon: false
 };
 
@@ -33,21 +33,21 @@ const GameReducer = (
         }
         case getType(gameActions.gameInitialized): {
             const { dealer, players } = action.payload;
-            let isComplete = false;
+            let gameComplete = false;
             let playerWon = false;
             // check to see if dealer won
             if (dealer.score === 21) {
-                isComplete = true;
+                gameComplete = true;
             } else if (players[0].score === 21) {
                 // TODO: don't make this depend on one player
-                isComplete = true;
+                gameComplete = true;
                 playerWon = true;
             }
             return {
                 ...state,
                 dealer,
                 players,
-                isComplete,
+                gameComplete,
                 playerWon
             };
         }
@@ -66,12 +66,12 @@ const GameReducer = (
 
             const updatedPlayer = updateHand(updatedPlayers[playerIdx], newCard);
             // check to see if player has busted or has 21
-            const { isComplete, playerWon } = checkForPlayerCompletion(updatedPlayer);
+            const { gameComplete, playerWon } = checkForPlayerCompletion(updatedPlayer);
             updatedPlayers[playerIdx] = updatedPlayer;
 
             return {
                 ...state,
-                isComplete,
+                gameComplete: gameComplete,
                 playerWon,
                 players: updatedPlayers
             };
@@ -92,7 +92,7 @@ const GameReducer = (
             return {
                 ...state,
                 playerWon,
-                isComplete: true
+                gameComplete: true
             }
         }
         default: {

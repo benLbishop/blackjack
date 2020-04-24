@@ -85,21 +85,21 @@ export const dealStartingCards = (newCards: Card[], dealer: Dealer, players: Pla
 }
 
 export const checkForPlayerCompletion = (player: Player): {
-    isComplete: boolean;
+    gameComplete: boolean;
     playerWon: boolean;
 } => {
-    let isComplete = false;
+    let gameComplete = false;
     let playerWon = false;
     if (player.score > 21) {
-        isComplete = true;
+        gameComplete = true;
     } else if (player.score === 21) {
         // TODO: this logic only works if the dealer can't hit.
         // needs to be updated to take dealer's score into account
-        isComplete = true;
+        gameComplete = true;
         playerWon = true;
     }
     return {
-        isComplete,
+        gameComplete,
         playerWon
     }
 }
