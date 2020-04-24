@@ -1,6 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { Card, DeckMetaData } from '../types/cardTypes';
-import { parseCardValue } from './blackjack';
+import { Card, DeckMetaData, CardValue, Suit } from '../types/cardTypes';
 import constants from '../config/constants';
 
 const handleAPIError = (err: any) => {
@@ -70,11 +69,47 @@ export const drawOneCard = async (deckId: string): Promise<Card> => {
     return res[0];
 }
 
+export interface RawCard {
+    image: string;
+    value: string;
+    suit: string;
+    code: string; // TODO: make enum?
+}
+
+const parseCardValue = (valStr: string): CardValue => {
+    switch (valStr) {
+        case ('JACK'): {
+            return CardValue.JACK;
+        }
+        case ('QUEEN'): {
+            return CardValue.QUEEN;
+        }
+        case ('KING'): {
+            return CardValue.KING;
+        }
+        case ('ACE'): {
+            return CardValue.ACE;
+        }
+        default: {
+            // if not a named card, value is given as a string representation of value
+            return parseInt(valStr, 10) as CardValue;
+        }
+    }
+}
+
+const parseRawCard = (card: RawCard): Card => {
+    return {
+        ...card,
+        value: parseCardValue(card.value),
+        suit: card.suit as Suit,
+    }
+};
+
 interface GetCardsRes {
     success: boolean,
     deck_id: string,
     remaining: number,
-    cards: Card[]
+    cards: RawCard[]
 }
 
 const getCards = async (deckId: string, numCards: number): Promise<Card[]> => {
@@ -94,6 +129,6 @@ const getCards = async (deckId: string, numCards: number): Promise<Card[]> => {
         handleAPIError(data);
         throw Error(`card retrieval not successful. Data: ${data.toString()}`);
     }
-    //@ts-ignore
-    return data.cards.map(c => ({...c, value: parseCardValue(c.value)}));
+
+    return data.cards.map(parseRawCard);
 }

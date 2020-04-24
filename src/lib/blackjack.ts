@@ -84,38 +84,6 @@ export const dealStartingCards = (newCards: Card[], dealer: Dealer, players: Pla
     }
 }
 
-// TODO: convert to enum
-export const parseCardValue = (valStr: string): number => {
-    if (valStr === '2') {
-        return 2;
-    }
-    if (valStr === '3') {
-        return 3;
-    }
-    if (valStr === '4') {
-        return 4;
-    }
-    if (valStr === '5') {
-        return 5;
-    }
-    if (valStr === '6') {
-        return 6;
-    }
-    if (valStr === '7') {
-        return 7;
-    }
-    if (valStr === '8') {
-        return 8;
-    }
-    if (valStr === '9') {
-        return 9;
-    }
-    if (valStr === 'ACE') {
-        return 11;
-    }
-    return 10;
-}
-
 export const checkForPlayerCompletion = (player: Player): {
     isComplete: boolean;
     playerWon: boolean;
