@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card } from '../types/cardTypes';
 import CardView from './CardView';
+import { Card } from '../types/cardTypes';
 
 interface Props {
   displayName: string;
+  score: number;
   cards: Card[];
   handleHit(): void;
   handleStand(): void;
@@ -24,14 +25,14 @@ const PlayerView: React.FC<Props> = (props) => {
   }
   return (
     <div className='flex-1 flex flex-col'>
-      <p>{props.displayName}</p>
+      <p className='text-4xl'>{props.displayName}: {props.score}</p>
       <div className='flex flex-col'>
         <div className='flex flex-row'>
           {getCardDisplay()}
         </div>
-        <div className='flex flex-row'>
-          <button className='mx-3 bg-white' onClick={props.handleHit}>Hit</button>
-          <button className='mx-3 bg-white' onClick={props.handleStand}>Stand</button>
+        <div className='flex flex-row h-10'>
+          <button className='mx-3 bg-white rounded border-2 w-1/12 h-20 bg-blue-500 border-blue-800' onClick={props.handleHit}>Hit</button>
+          <button className='mx-3 bg-white rounded border-2 w-1/12 h-20 bg-gray-400 border-gray-800' onClick={props.handleStand}>Stand</button>
         </div>
       </div>
     </div>

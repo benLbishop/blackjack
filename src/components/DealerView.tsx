@@ -4,6 +4,7 @@ import CardView from './CardView';
 
 interface Props {
   displayName: string;
+  score: number;
   cards: Card[];
 }
 
@@ -22,7 +23,7 @@ const DealerView: React.FC<Props> = (props) => {
   }
   return (
     <div className='flex-1 flex flex-col'>
-      <p>{props.displayName}</p>
+      <p className='text-4xl'>{props.displayName}: {props.score}</p>
       <div className='flex flex-row'>
         {getCardDisplay()}
       </div>

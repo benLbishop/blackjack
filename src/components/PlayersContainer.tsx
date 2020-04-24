@@ -15,6 +15,7 @@ const PlayersContainer: React.FC<Props> = (props) => {
       return <PlayerView
         key={p.id}
         displayName={p.displayName}
+        score={p.score}
         cards={p.cards}
         handleHit={() => props.handleHit(p.id)}
         handleStand={() => props.handleStay(p.id)}

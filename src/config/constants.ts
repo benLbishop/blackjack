@@ -2,7 +2,7 @@ import { Player, Dealer } from '../types/playerTypes';
 
 const DEFAULT_PLAYER: Player = {
     id: 'player',
-    displayName: 'default',
+    displayName: 'Default Player',
     cards: [],
     score: 0
 };
